@@ -29,7 +29,11 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="ShoppingLists">
-        <Stack.Screen name="ShoppingLists" component={ShoppingLists} />
+      <Stack.Screen
+         name="ShoppingLists"
+       >
+         {props => <ShoppingLists db={db} {...props} />}
+       </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
