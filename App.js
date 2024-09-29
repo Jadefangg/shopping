@@ -1,3 +1,5 @@
+import  {  intitalizeApp } from 'firebase/app';
+import  {  getFirestore } from 'firebase/firestore'; // Import the functions you need from the SDKs you need
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
