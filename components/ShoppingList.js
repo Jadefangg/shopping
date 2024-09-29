@@ -6,18 +6,18 @@ const ShoppingLists = ({ db }) => {
   const [lists, setLists] = useState([]);
 
   useEffect(() => {
-    const fetchLists = async () => {
-      const querySnapshot = await getDocs(collection(db, "shoppingLists"));
-      const listsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setLists(listsData);
-    };
-
-    fetchLists();
-  }, [db]);
-
+    const fetchShoppingLists = async () => { //this is the correct way to define an async function inside a useEffect hook
+        const listsDocuments = await getDocs(collection(db, "shoppinglists"));
+        let newLists = [];
+        listsDocuments.forEach(docObject => {
+          newLists.push({ id: docObject.id, ...docObject.data() })
+        });
+        setLists(newLists)
+      }
+    
+      useEffect(() => {
+        fetchShoppingLists();
+      }, [`${lists}`]);
   return (
     <View>
       <FlatList
