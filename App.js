@@ -28,14 +28,17 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="ShoppingLists">
+    <Stack.Navigator
+      initialRouteName="Welcome"
+    >
+      <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen
-         name="ShoppingLists"
-       >
-         {props => <ShoppingLists db={db} {...props} />}
-       </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
+        name="ShoppingLists"
+      >
+        {props => <ShoppingLists db={db} {...props} />}
+      </Stack.Screen>
+    </Stack.Navigator>
+  </NavigationContainer>
   );
 };
 

@@ -1,27 +1,39 @@
 import { useState, useEffect } from "react";
-import { View, FlatList, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from "react-native";
-import { collection, getDocs } from "firebase/firestore";
+import { View, FlatList, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView, Alert } from "react-native";
+import { collection, getDocs, addDoc, onSnapshot, query, where } from "firebase/firestore";
 
 const ShoppingLists = ({ db }) => {
+    
   const [lists, setLists] = useState([]);
   const [listName, setListName] = useState('');
   const [item1, setItem1] = useState('');
   const [item2, setItem2] = useState('');
 
-  useEffect(() => {
-    const fetchShoppingLists = async () => {
-      const listsDocuments = await getDocs(collection(db, "shoppinglists"));
+  useEffect(() => { //hook to fetch the shopping lists from the database
+    const unsubShoppinglists = onSnapshot(collection(db, "shoppinglists"), (documentsSnapshot) => {
       let newLists = [];
-      listsDocuments.forEach(docObject => {
-        newLists.push({ id: docObject.id, ...docObject.data() });
+      documentsSnapshot.forEach(doc => {
+        newLists.push({ id: doc.id, ...doc.data() })
       });
       setLists(newLists);
-    };
+    });
 
-    fetchShoppingLists();
-  }, [db]);
+    // this is used to unsubscribe from the snapshot listener and clean up the listener
+    return () => {
+      if (unsubShoppinglists) unsubShoppinglists();
+    }
+  }, []);
 
-  return (
+  const addShoppingList = async (newList) => { //function to add a new shopping list
+    const newListRef = await addDoc(collection(db, "shoppinglists"), newList);
+    if (newListRef.id) {
+      setLists([newList, ...lists]);
+      Alert.alert(`The list "${listName}" has been added.`);
+    } else {
+      Alert.alert("Unable to add. Please try later");
+    }
+  }
+  return (  //UI for the shopping list
     <View style={styles.container}>
       <FlatList
         style={styles.listsContainer}
@@ -54,7 +66,7 @@ const ShoppingLists = ({ db }) => {
         />
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => { }}
+          onPress={addShoppingList}
         >
           <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
